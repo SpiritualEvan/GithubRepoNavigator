@@ -22,15 +22,18 @@ class RepositoryListFetcherTests: XCTestCase {
     }
     
     func testBeginFetch() {
-        let expect = expectation(description: "a")
+        let expect = expectation(description: "testBeginFetchExpect")
         RepositoryListFetcher.shared.beginFetch()
             .subscribe(onNext: { (results) in
                 XCTAssertGreaterThan(results.count, 0)
+                for repositoryInfo in results {
+                    XCTAssertNotNil(repositoryInfo.owner)
+                }
+                expect.fulfill()
             }, onError: { (error) in
                 XCTFail(error.localizedDescription)
-            }, onCompleted: {
-                expect.fulfill()
-            }, onDisposed: nil).disposed(by: disposeBag)
+            }, onCompleted:nil, onDisposed: nil).disposed(by: disposeBag)
+        
         self.waitForExpectations(timeout: 5.0) { (error) in
             XCTAssertNil(error, error!.localizedDescription)
         }

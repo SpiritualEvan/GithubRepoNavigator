@@ -9,15 +9,37 @@
 import UIKit
 import RxSwift
 
-struct RepositoryInfo {
-    var avatar:URL?
-    var owner:String!
-}
+
 
 enum RepositoryListFetcherError:Error {
     case noResponseReturnedFromServer
     case serverResponseError(code:Int)
     case noDataReturnedFromServer
+    case unexpectedRootFormatOfJson(json:Any)
+    case noOwnerEntryFounded(json:[String:Any])
+    case noOwnerNameEntryFounded(json:[String:Any])
+    case invaildAvatarURLString(json:[String:Any])
+}
+
+struct RepositoryInfo {
+    var avatar:URL?
+    var owner:String!
+    
+    init(json:[String:Any]!) throws {
+        guard let ownerEntry = json["owner"] as? [String:Any] else {
+            throw RepositoryListFetcherError.noOwnerEntryFounded(json: json)
+        }
+        guard let nameEntry = ownerEntry["login"] as? String else {
+            throw RepositoryListFetcherError.noOwnerNameEntryFounded(json: json)
+        }
+        owner = nameEntry
+        if let avatarUrlString = ownerEntry["avatar_url"] as? String {
+            guard let avatarURL = URL(string:avatarUrlString) else {
+                throw RepositoryListFetcherError.invaildAvatarURLString(json: json)
+            }
+            avatar = avatarURL
+        }
+    }
 }
 
 final class RepositoryListFetcher {
@@ -50,8 +72,24 @@ final class RepositoryListFetcher {
                     observer.onError(RepositoryListFetcherError.noDataReturnedFromServer)
                     return
                 }
-                observer.onNext([])
                 
+                var repositoryInfos = [RepositoryInfo]()
+
+                do {
+                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String:Any]] else {
+                        observer.onError(RepositoryListFetcherError.unexpectedRootFormatOfJson(json: try JSONSerialization.jsonObject(with: data, options: [])))
+                        return
+                    }
+                    
+                    for repositoryDict in json {
+                        repositoryInfos.append(try RepositoryInfo(json:repositoryDict))
+                    }
+                    
+                }catch {
+                    observer.onError(error)
+                    return
+                }
+                observer.onNext(repositoryInfos)
             }
             task.resume()
             
