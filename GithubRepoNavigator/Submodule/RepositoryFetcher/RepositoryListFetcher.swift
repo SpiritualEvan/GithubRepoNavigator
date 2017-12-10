@@ -49,10 +49,18 @@ final class RepositoryListFetcher {
     private var since:Int = 0
     
     func newFetchObserver() -> Observable<[RepositoryInfo]> {
+        self.since = 0
+        return fetchObserver(since: 0)
+    }
+    func nextFetchObserver() -> Observable<[RepositoryInfo]> {
+        return fetchObserver(since: self.since)
+    }
+    
+    private func fetchObserver(since:Int) -> Observable<[RepositoryInfo]> {
         
         return Observable<[RepositoryInfo]>.create{ (observer) -> Disposable in
             
-            let url = URL(string: "https://api.github.com/repositories")!
+            let url = URL(string: "https://api.github.com/repositories?since=\(since)")!
             let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
             
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -74,7 +82,7 @@ final class RepositoryListFetcher {
                 }
                 
                 var repositoryInfos = [RepositoryInfo]()
-
+                
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String:Any]] else {
                         observer.onError(RepositoryListFetcherError.unexpectedRootFormatOfJson(json: try JSONSerialization.jsonObject(with: data, options: [])))
@@ -85,6 +93,8 @@ final class RepositoryListFetcher {
                         repositoryInfos.append(try RepositoryInfo(json:repositoryDict))
                     }
                     
+                    // store next page id
+                    self.since = json.last!["id"] as? Int ?? 0
                 }catch {
                     observer.onError(error)
                     return
@@ -96,7 +106,7 @@ final class RepositoryListFetcher {
             return Disposables.create() {
                 task.cancel()
             }
-        }.subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
-        .observeOn(MainScheduler.instance)
+            }.subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
+            .observeOn(MainScheduler.instance)
     }
 }

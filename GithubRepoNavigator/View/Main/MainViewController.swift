@@ -8,6 +8,7 @@
 
 import UIKit
 import RxSwift
+import AlamofireImage
 
 class MainViewController: UIViewController {
 
@@ -16,7 +17,6 @@ class MainViewController: UIViewController {
     var tableView:UITableView!
     var repositories = [RepositoryInfo]()
     let disposeBag = DisposeBag()
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,16 +62,31 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainViewController.RepositoryInfoCellIdentifier, for: indexPath)
+        cell.imageView!.contentMode = .scaleAspectFill
+        cell.imageView!.image = #imageLiteral(resourceName: "empty_avatar")
+        cell.textLabel!.text = nil
+        return cell
+    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let repositoryInfo = repositories[indexPath.row]
         if let avatarURL = repositoryInfo.avatar {
-            do {
-                cell.imageView!.image = UIImage(data: try Data(contentsOf: avatarURL))!
-            }catch {
-                print(error)
-            }
+            cell.imageView!.af_setImage(withURL: avatarURL)
         }
         cell.textLabel!.text = repositoryInfo.owner
-        return cell
+    }
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if indexPath.row + 1 == repositories.count {
+            RepositoryListFetcher.shared.nextFetchObserver()
+                .subscribe(onNext: { (results) in
+                    self.repositories.append(contentsOf: results)
+                    self.tableView.reloadData()
+                }, onError: { (error) in
+                    let errorVC = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
+                    errorVC.addAction(UIAlertAction(title: nil, style: .default, handler: nil))
+                    self.present(errorVC, animated: true, completion: nil)
+                }, onCompleted: nil, onDisposed: nil).disposed(by: disposeBag)
+        }
     }
 }
 
