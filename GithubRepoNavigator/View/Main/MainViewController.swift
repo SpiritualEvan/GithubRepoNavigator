@@ -15,19 +15,29 @@ class MainViewController: UIViewController {
     static let RepositoryInfoCellIdentifier = "RepositoryInfoCellIdentifier"
     
     var tableView:UITableView!
-    var repositories = [RepositoryInfo]()
     let disposeBag = DisposeBag()
+    var searchController:UISearchController!
+    
+    var repositories = [RepositoryInfo]()
+    var filteredRepositories = [RepositoryInfo]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchBar.sizeToFit()
+        searchController.searchBar.autocapitalizationType = .none
         
         tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: MainViewController.RepositoryInfoCellIdentifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.tableHeaderView = searchController.searchBar
         view.addSubview(tableView)
-
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
             tableView.widthAnchor.constraint(equalTo: view.widthAnchor),
@@ -77,7 +87,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return repositories.count
+        return  searchController.isActive ? filteredRepositories.count : repositories.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // reset cell
@@ -89,7 +99,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // setup cell with model
-        let repositoryInfo = repositories[indexPath.row]
+        let repositoryInfo = searchController.isActive ? filteredRepositories[indexPath.row] : repositories[indexPath.row]
         if let avatarURL = repositoryInfo.avatar {
             cell.imageView!.af_setImage(withURL: avatarURL)
         }
@@ -100,4 +110,17 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         }
     }
 }
-
+extension MainViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        let searchText = searchController.searchBar.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        if nil != searchText && 0 < searchText!.count {
+            filteredRepositories = repositories.filter { $0.owner.contains(searchText!) }
+        }else {
+            filteredRepositories = repositories
+        }
+        
+        tableView.reloadData()
+    }
+    
+    
+}
