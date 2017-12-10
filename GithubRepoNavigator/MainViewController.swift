@@ -10,11 +10,31 @@ import UIKit
 
 class MainViewController: UIViewController {
 
+    var tableView:UITableView!
+    var searchBar:UISearchBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
+        
+        searchBar = UISearchBar(frame: .zero)
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(searchBar)
+        searchBar.sizeToFit()
+        
+        tableView = UITableView(frame: .zero, style: .plain)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(tableView)
 
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            searchBar.widthAnchor.constraint(equalTo: view.widthAnchor),
+            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            tableView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
+        ])
+        
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -22,4 +42,3 @@ class MainViewController: UIViewController {
 
 
 }
-

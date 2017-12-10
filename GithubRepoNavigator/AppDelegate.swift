@@ -24,13 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let mainVC = MainViewController()
         mainVC.view.backgroundColor = UIColor.white
         window.rootViewController = mainVC
-        mainVC.view.translatesAutoresizingMaskIntoConstraints = false
-        mainVC.view.leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 0.0)
-        mainVC.view.trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: 0.0)
-        mainVC.view.topAnchor.constraint(equalTo: window.topAnchor, constant: 0.0)
-        mainVC.view.bottomAnchor.constraint(equalTo: window.bottomAnchor, constant: 0.0)
-        
-        
         window.makeKeyAndVisible()
         return true
     }
