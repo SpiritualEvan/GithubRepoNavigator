@@ -111,15 +111,20 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 extension MainViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
+    
+    @objc func reloadTable() {
         let searchText = searchController.searchBar.text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         if nil != searchText && 0 < searchText!.count {
             filteredRepositories = repositories.filter { $0.owner.contains(searchText!) }
         }else {
             filteredRepositories = repositories
         }
-        
         tableView.reloadData()
+    }
+    func updateSearchResults(for searchController: UISearchController) {
+        // debounce 0.5 sec
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector:#selector(MainViewController.reloadTable), object:nil)
+        self.perform(#selector(MainViewController.reloadTable), with: nil, afterDelay: 0.5)
     }
     
     
