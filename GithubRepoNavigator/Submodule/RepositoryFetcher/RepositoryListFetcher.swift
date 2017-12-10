@@ -21,7 +21,16 @@ enum RepositoryListFetcherError:Error {
     case invaildAvatarURLString(json:[String:Any])
 }
 
-struct RepositoryInfo {
+struct RepositoryInfo : Equatable, Hashable {
+    
+    var hashValue: Int {
+        return owner.hashValue
+    }
+    
+    static func ==(lhs: RepositoryInfo, rhs: RepositoryInfo) -> Bool {
+        return lhs.owner == rhs.owner
+    }
+    
     var avatar:URL?
     var owner:String!
     
@@ -94,7 +103,15 @@ final class RepositoryListFetcher {
                     observer.onError(error)
                     return
                 }
-                observer.onNext(repositoryInfos)
+                var duplicatedInfos = Set<RepositoryInfo>()
+                let distinctInfos = repositoryInfos.flatMap { (repoInfo) -> RepositoryInfo? in
+                    guard !duplicatedInfos.contains(repoInfo) else {
+                        return nil
+                    }
+                    duplicatedInfos.insert(repoInfo)
+                    return repoInfo
+                }
+                observer.onNext(distinctInfos)
             }
             task.resume()
             
