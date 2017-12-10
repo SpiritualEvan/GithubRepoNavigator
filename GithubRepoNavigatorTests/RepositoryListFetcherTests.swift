@@ -21,6 +21,9 @@ class RepositoryListFetcherTests: XCTestCase {
     func testBeginFetch() {
         let expect = expectation(description: "a")
         RepositoryListFetcher.shared.beginFetch { (results, error) in
+            XCTAssertNil(error)
+            XCTAssertNotNil(results)
+            XCTAssertGreaterThan(results!.count, 0)
             expect.fulfill()
         }
         self.waitForExpectations(timeout: 5.0) { (error) in

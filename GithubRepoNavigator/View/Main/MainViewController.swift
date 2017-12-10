@@ -38,7 +38,10 @@ class MainViewController: UIViewController {
                 return
             }
             guard let results = results else {
-                fatalError("There was no error but nil results returned")
+                let errorAlertVC = UIAlertController(title: nil, message: "There was no error but nil results returned", preferredStyle: .alert)
+                errorAlertVC.addAction(UIAlertAction(title: "close", style: .default, handler: nil))
+                self.present(errorAlertVC, animated: true, completion: nil)
+                return
             }
             self.repositories = results
             self.tableView.reloadData()
