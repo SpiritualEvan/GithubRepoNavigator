@@ -8,6 +8,7 @@
 
 import UIKit
 import RxSwift
+
 class MainViewController: UIViewController {
 
     static let RepositoryInfoCellIdentifier = "RepositoryInfoCellIdentifier"
@@ -32,7 +33,7 @@ class MainViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
         ])
         
-        RepositoryListFetcher.shared.beginFetch()
+        RepositoryListFetcher.shared.newFetchObserver()
             .subscribe(onNext: { (results) in
                 self.repositories = results
                 self.tableView.reloadData()

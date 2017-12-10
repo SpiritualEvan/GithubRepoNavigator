@@ -48,7 +48,7 @@ final class RepositoryListFetcher {
     
     private var since:Int = 0
     
-    func beginFetch() -> Observable<[RepositoryInfo]> {
+    func newFetchObserver() -> Observable<[RepositoryInfo]> {
         
         return Observable<[RepositoryInfo]>.create{ (observer) -> Disposable in
             

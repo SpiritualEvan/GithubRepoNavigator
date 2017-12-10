@@ -23,7 +23,7 @@ class RepositoryListFetcherTests: XCTestCase {
     
     func testBeginFetch() {
         let expect = expectation(description: "testBeginFetchExpect")
-        RepositoryListFetcher.shared.beginFetch()
+        RepositoryListFetcher.shared.newFetchObserver()
             .subscribe(onNext: { (results) in
                 XCTAssertGreaterThan(results.count, 0)
                 for repositoryInfo in results {
