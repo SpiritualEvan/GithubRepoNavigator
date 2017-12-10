@@ -30,6 +30,8 @@ class MainViewController: UIViewController {
         
         tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(RepositoryInfoCell.self, forCellReuseIdentifier: RepositoryInfoCell.reuseIdentifier)
+        tableView.register(EmptyCell.self, forCellReuseIdentifier: EmptyCell.reuseIdentifier)
+        tableView.register(LoadingCell.self, forCellReuseIdentifier: LoadingCell.reuseIdentifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
@@ -88,26 +90,67 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return  searchController.isActive ? filteredRepositories.count : repositories.count
+        if searchController.isActive {
+            return 0 < filteredRepositories.count ? filteredRepositories.count : 1
+        }else {
+            return repositories.count + 1
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // reset cell
-        let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryInfoCell.reuseIdentifier, for: indexPath) as! RepositoryInfoCell
-        cell.avatarView.image = nil
-        cell.nameField.text = nil
-        return cell
+        
+        if searchController.isActive {
+            if 0 < filteredRepositories.count {
+                let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryInfoCell.reuseIdentifier, for: indexPath) as! RepositoryInfoCell
+                cell.avatarView.image = nil
+                cell.nameField.text = nil
+                return cell
+                
+            // return empty cell
+            }else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: EmptyCell.reuseIdentifier, for: indexPath) as! EmptyCell
+                return cell
+            }
+        }else {
+            if indexPath.row < repositories.count {
+                let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryInfoCell.reuseIdentifier, for: indexPath) as! RepositoryInfoCell
+                cell.avatarView.image = nil
+                cell.nameField.text = nil
+                return cell
+            }else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: LoadingCell.reuseIdentifier, for: indexPath) as! LoadingCell
+                return cell
+            }
+            
+        }
+        
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let repositoryInfoCell = cell as! RepositoryInfoCell
-        // setup cell with model
-        let repositoryInfo = searchController.isActive ? filteredRepositories[indexPath.row] : repositories[indexPath.row]
-        if let avatarURL = repositoryInfo.avatar {
-            repositoryInfoCell.avatarView.af_setImage(withURL: avatarURL)
+        switch cell {
+        case is RepositoryInfoCell:
+            let repositoryInfoCell = cell as! RepositoryInfoCell
+            // setup cell with model
+            let repositoryInfo = searchController.isActive ? filteredRepositories[indexPath.row] : repositories[indexPath.row]
+            if let avatarURL = repositoryInfo.avatar {
+                repositoryInfoCell.avatarView.af_setImage(withURL: avatarURL)
+            }
+            repositoryInfoCell.nameField.text = repositoryInfo.owner
+            
+            if indexPath.row + 1 == repositories.count {
+                loadNextPage(reset: false)
+            }
+        case is LoadingCell:
+            let loadingCell = cell as! LoadingCell
+            loadingCell.loadingIndicator.startAnimating()
+        default:
+            break
         }
-        repositoryInfoCell.nameField.text = repositoryInfo.owner
-        
-        if indexPath.row + 1 == repositories.count {
-            loadNextPage(reset: false)
+    }
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        switch cell {
+        case is LoadingCell:
+            let loadingCell = cell as! LoadingCell
+            loadingCell.loadingIndicator.stopAnimating()
+        default: break
         }
     }
 }
