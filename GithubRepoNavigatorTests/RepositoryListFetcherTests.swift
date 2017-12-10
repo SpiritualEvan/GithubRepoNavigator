@@ -18,7 +18,7 @@ class RepositoryListFetcherTests: XCTestCase {
         super.tearDown()
     }
     
-    func testBeginFetcher() {
+    func testBeginFetch() {
         let expect = expectation(description: "a")
         RepositoryListFetcher.shared.beginFetch { (results, error) in
             expect.fulfill()
