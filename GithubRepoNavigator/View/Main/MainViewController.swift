@@ -10,6 +10,8 @@ import UIKit
 
 class MainViewController: UIViewController {
 
+    static let RepositoryInfoCellIdentifier = "RepositoryInfoCellIdentifier"
+    
     var tableView:UITableView!
     var searchBar:UISearchBar!
     
@@ -22,7 +24,10 @@ class MainViewController: UIViewController {
         searchBar.sizeToFit()
         
         tableView = UITableView(frame: .zero, style: .plain)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: MainViewController.RepositoryInfoCellIdentifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.delegate = self
+        tableView.dataSource = self
         view.addSubview(tableView)
 
         NSLayoutConstraint.activate([
@@ -42,3 +47,21 @@ class MainViewController: UIViewController {
 
 
 }
+
+extension MainViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 10
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainViewController.RepositoryInfoCellIdentifier, for: indexPath)
+        cell.imageView?.image = #imageLiteral(resourceName: "heart")
+        cell.textLabel?.text = "evan"
+        return cell
+    }
+}
+
