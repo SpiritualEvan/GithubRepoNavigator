@@ -33,6 +33,7 @@ class MainViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorStyle = .none
         tableView.tableHeaderView = searchController.searchBar
         tableView.estimatedRowHeight = 80
         tableView.rowHeight = UITableViewAutomaticDimension
@@ -92,18 +93,18 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // reset cell
         let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryInfoCell.reuseIdentifier, for: indexPath) as! RepositoryInfoCell
-        cell.imageView!.contentMode = .scaleAspectFill
-        cell.imageView!.image = #imageLiteral(resourceName: "empty_avatar")
-        cell.textLabel!.text = nil
+        cell.avatarView.image = nil
+        cell.nameField.text = nil
         return cell
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let repositoryInfoCell = cell as! RepositoryInfoCell
         // setup cell with model
         let repositoryInfo = searchController.isActive ? filteredRepositories[indexPath.row] : repositories[indexPath.row]
         if let avatarURL = repositoryInfo.avatar {
-            cell.imageView!.af_setImage(withURL: avatarURL)
+            repositoryInfoCell.avatarView.af_setImage(withURL: avatarURL)
         }
-        cell.textLabel!.text = repositoryInfo.owner
+        repositoryInfoCell.nameField.text = repositoryInfo.owner
         
         if indexPath.row + 1 == repositories.count {
             loadNextPage(reset: false)
