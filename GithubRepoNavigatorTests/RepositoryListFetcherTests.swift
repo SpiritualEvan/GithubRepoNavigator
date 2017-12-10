@@ -7,8 +7,11 @@
 //
 
 import XCTest
+import RxSwift
 @testable import GithubRepoNavigator
 class RepositoryListFetcherTests: XCTestCase {
+
+    let disposeBag = DisposeBag()
     
     override func setUp() {
         super.setUp()
@@ -20,15 +23,18 @@ class RepositoryListFetcherTests: XCTestCase {
     
     func testBeginFetch() {
         let expect = expectation(description: "a")
-        RepositoryListFetcher.shared.beginFetch { (results, error) in
-            XCTAssertNil(error)
-            XCTAssertNotNil(results)
-            XCTAssertGreaterThan(results!.count, 0)
-            expect.fulfill()
-        }
+        RepositoryListFetcher.shared.beginFetch()
+            .subscribe(onNext: { (results) in
+                XCTAssertGreaterThan(results.count, 0)
+            }, onError: { (error) in
+                XCTFail(error.localizedDescription)
+            }, onCompleted: {
+                expect.fulfill()
+            }, onDisposed: nil).disposed(by: disposeBag)
         self.waitForExpectations(timeout: 5.0) { (error) in
-            XCTAssertNil(error)
+            XCTAssertNil(error, error!.localizedDescription)
         }
     }
+    
     
 }

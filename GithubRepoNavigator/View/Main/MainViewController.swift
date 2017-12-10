@@ -7,13 +7,14 @@
 //
 
 import UIKit
-
+import RxSwift
 class MainViewController: UIViewController {
 
     static let RepositoryInfoCellIdentifier = "RepositoryInfoCellIdentifier"
     
     var tableView:UITableView!
     var repositories = [RepositoryInfo]()
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,22 +31,17 @@ class MainViewController: UIViewController {
             tableView.widthAnchor.constraint(equalTo: view.widthAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
         ])
-        RepositoryListFetcher.shared.beginFetch { (results, error) in
-            guard nil == error else {
-                let errorAlertVC = UIAlertController(title: nil, message: error?.localizedDescription, preferredStyle: .alert)
-                errorAlertVC.addAction(UIAlertAction(title: "close", style: .default, handler: nil))
-                self.present(errorAlertVC, animated: true, completion: nil)
-                return
-            }
-            guard let results = results else {
-                let errorAlertVC = UIAlertController(title: nil, message: "There was no error but nil results returned", preferredStyle: .alert)
-                errorAlertVC.addAction(UIAlertAction(title: "close", style: .default, handler: nil))
-                self.present(errorAlertVC, animated: true, completion: nil)
-                return
-            }
-            self.repositories = results
-            self.tableView.reloadData()
-        }
+        
+        RepositoryListFetcher.shared.beginFetch()
+            .subscribe(onNext: { (results) in
+                self.repositories = results
+                self.tableView.reloadData()
+            }, onError: { (error) in
+                let errorVC = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
+                errorVC.addAction(UIAlertAction(title: nil, style: .default, handler: nil))
+                self.present(errorVC, animated: true, completion: nil)
+            }, onCompleted: nil, onDisposed: nil).disposed(by: disposeBag)
+        
     }
     
     override func didReceiveMemoryWarning() {

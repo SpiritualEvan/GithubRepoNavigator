@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RxSwift
 
 struct RepositoryInfo {
     var avatar:URL?
@@ -25,41 +26,39 @@ final class RepositoryListFetcher {
     
     private var since:Int = 0
     
-    func beginFetch(completion:@escaping (_ results:[RepositoryInfo]?, _ error:Error?) -> Void) {
+    func beginFetch() -> Observable<[RepositoryInfo]> {
         
-        let url = URL(string: "https://api.github.com/repositories")!
-        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard nil == error else {
-                DispatchQueue.main.async {
-                    completion(nil, error)
-                }
-                return
-            }
-            guard let response = response as? HTTPURLResponse else {
-                DispatchQueue.main.async {
-                    completion(nil, RepositoryListFetcherError.noResponseReturnedFromServer)
-                }
-                return
-            }
-            guard 200 == response.statusCode else {
-                DispatchQueue.main.async {
-                    completion(nil, RepositoryListFetcherError.serverResponseError(code: response.statusCode))
-                }
-                return
-            }
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    completion(nil, RepositoryListFetcherError.noDataReturnedFromServer)
-                }
-                return
-            }
+        return Observable<[RepositoryInfo]>.create{ (observer) -> Disposable in
             
-            DispatchQueue.main.async {
-                completion(nil, nil)
-            }
+            let url = URL(string: "https://api.github.com/repositories")!
+            let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
             
-        }.resume()
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard nil == error else {
+                    observer.onError(error!)
+                    return
+                }
+                guard let response = response as? HTTPURLResponse else {
+                    observer.onError(RepositoryListFetcherError.noResponseReturnedFromServer)
+                    return
+                }
+                guard 200 == response.statusCode else {
+                    observer.onError(RepositoryListFetcherError.serverResponseError(code: response.statusCode))
+                    return
+                }
+                guard let data = data else {
+                    observer.onError(RepositoryListFetcherError.noDataReturnedFromServer)
+                    return
+                }
+                observer.onNext([])
+                
+            }
+            task.resume()
+            
+            return Disposables.create() {
+                task.cancel()
+            }
+        }.subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
+        .observeOn(MainScheduler.instance)
     }
 }
