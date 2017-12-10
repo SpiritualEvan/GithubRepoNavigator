@@ -33,22 +33,41 @@ class MainViewController: UIViewController {
             tableView.widthAnchor.constraint(equalTo: view.widthAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
         ])
-        
-        RepositoryListFetcher.shared.newFetchObserver()
-            .subscribe(onNext: { (results) in
-                self.repositories = results
-                self.tableView.reloadData()
-            }, onError: { (error) in
-                let errorVC = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
-                errorVC.addAction(UIAlertAction(title: nil, style: .default, handler: nil))
-                self.present(errorVC, animated: true, completion: nil)
-            }, onCompleted: nil, onDisposed: nil).disposed(by: disposeBag)
-        
+        loadNextPage(reset: true)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+    }
+    func showLoading(loading:Bool) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = loading
+        self.view.isUserInteractionEnabled = !loading
+    }
+    
+    func loadNextPage(reset:Bool) {
+        
+        showLoading(loading: true)
+        
+        RepositoryListFetcher.shared.nextPageObserver(reset:reset)
+            .subscribe(onNext: { (results) in
+                
+                self.showLoading(loading: false)
+                
+                if true == reset {
+                    self.repositories = results
+                }else {
+                    self.repositories.append(contentsOf: results)
+                }
+                
+                self.tableView.reloadData()
+                
+            }, onError: { (error) in
+                self.showLoading(loading: false)
+                let errorVC = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
+                errorVC.addAction(UIAlertAction(title: nil, style: .default, handler: nil))
+                self.present(errorVC, animated: true, completion: nil)
+            }, onCompleted: nil, onDisposed: nil).disposed(by: disposeBag)
     }
 }
 
@@ -61,6 +80,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         return repositories.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // reset cell
         let cell = tableView.dequeueReusableCell(withIdentifier: MainViewController.RepositoryInfoCellIdentifier, for: indexPath)
         cell.imageView!.contentMode = .scaleAspectFill
         cell.imageView!.image = #imageLiteral(resourceName: "empty_avatar")
@@ -68,24 +88,15 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        // setup cell with model
         let repositoryInfo = repositories[indexPath.row]
         if let avatarURL = repositoryInfo.avatar {
             cell.imageView!.af_setImage(withURL: avatarURL)
         }
         cell.textLabel!.text = repositoryInfo.owner
-    }
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         if indexPath.row + 1 == repositories.count {
-            RepositoryListFetcher.shared.nextFetchObserver()
-                .subscribe(onNext: { (results) in
-                    self.repositories.append(contentsOf: results)
-                    self.tableView.reloadData()
-                }, onError: { (error) in
-                    let errorVC = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
-                    errorVC.addAction(UIAlertAction(title: nil, style: .default, handler: nil))
-                    self.present(errorVC, animated: true, completion: nil)
-                }, onCompleted: nil, onDisposed: nil).disposed(by: disposeBag)
+            loadNextPage(reset: false)
         }
     }
 }

@@ -48,19 +48,14 @@ final class RepositoryListFetcher {
     
     private var since:Int = 0
     
-    func newFetchObserver() -> Observable<[RepositoryInfo]> {
-        self.since = 0
-        return fetchObserver(since: 0)
-    }
-    func nextFetchObserver() -> Observable<[RepositoryInfo]> {
-        return fetchObserver(since: self.since)
-    }
-    
-    private func fetchObserver(since:Int) -> Observable<[RepositoryInfo]> {
+    func nextPageObserver(reset:Bool) -> Observable<[RepositoryInfo]> {
+        if true == reset {
+            self.since = 0
+        }
         
         return Observable<[RepositoryInfo]>.create{ (observer) -> Disposable in
             
-            let url = URL(string: "https://api.github.com/repositories?since=\(since)")!
+            let url = URL(string: "https://api.github.com/repositories?since=\(self.since)")!
             let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
             
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in

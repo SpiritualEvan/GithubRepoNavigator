@@ -20,10 +20,12 @@ class RepositoryListFetcherTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
     }
-    
-    func testNewFetchObserver() {
-        let expect = expectation(description: "testBeginFetchExpect")
-        RepositoryListFetcher.shared.newFetchObserver()
+  
+    func testResetPageLoading() {
+        let expect = expectation(description: "testNextFetchObserver")
+        
+        // fetch next page after first fetch
+        RepositoryListFetcher.shared.nextPageObserver(reset:true)
             .subscribe(onNext: { (results) in
                 XCTAssertGreaterThan(results.count, 0)
                 for repositoryInfo in results {
@@ -32,20 +34,20 @@ class RepositoryListFetcherTests: XCTestCase {
                 expect.fulfill()
             }, onError: { (error) in
                 XCTFail(error.localizedDescription)
-            }, onCompleted:nil, onDisposed: nil).disposed(by: disposeBag)
-        
+            }, onCompleted:nil, onDisposed: nil).disposed(by: self.disposeBag)
         self.waitForExpectations(timeout: 5.0) { (error) in
             XCTAssertNil(error, error!.localizedDescription)
         }
+        
     }
-    func testNextFetchObserver() {
+    func testNextPageLoading() {
         let expect = expectation(description: "testNextFetchObserver")
         
-        RepositoryListFetcher.shared.newFetchObserver()
+        // fetch next page after first fetch
+        RepositoryListFetcher.shared.nextPageObserver(reset:true)
             .subscribe(onNext: { (results) in
                 
-                // fetch next page after first fetch
-                RepositoryListFetcher.shared.nextFetchObserver()
+                RepositoryListFetcher.shared.nextPageObserver(reset:false)
                     .subscribe(onNext: { (results) in
                         XCTAssertGreaterThan(results.count, 0)
                         for repositoryInfo in results {
@@ -55,14 +57,12 @@ class RepositoryListFetcherTests: XCTestCase {
                     }, onError: { (error) in
                         XCTFail(error.localizedDescription)
                     }, onCompleted:nil, onDisposed: nil).disposed(by: self.disposeBag)
-
                 
-            }, onError: nil, onCompleted:nil, onDisposed: nil).disposed(by: disposeBag)
-        
+                
+            }, onError: nil, onCompleted:nil, onDisposed: nil).disposed(by: self.disposeBag)
         self.waitForExpectations(timeout: 5.0) { (error) in
             XCTAssertNil(error, error!.localizedDescription)
         }
         
     }
-    
 }
