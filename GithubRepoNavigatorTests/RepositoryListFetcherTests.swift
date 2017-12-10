@@ -20,11 +20,10 @@ class RepositoryListFetcherTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
     }
-  
-    func testResetPageLoading() {
+    func testModelValidationWithPageLoading() {
+        
         let expect = expectation(description: "testNextFetchObserver")
         
-        // fetch next page after first fetch
         RepositoryListFetcher.shared.nextPageObserver(reset:true)
             .subscribe(onNext: { (results) in
                 XCTAssertGreaterThan(results.count, 0)
@@ -32,34 +31,59 @@ class RepositoryListFetcherTests: XCTestCase {
                     XCTAssertNotNil(repositoryInfo.owner)
                 }
                 expect.fulfill()
+                
             }, onError: { (error) in
                 XCTFail(error.localizedDescription)
             }, onCompleted:nil, onDisposed: nil).disposed(by: self.disposeBag)
+        
+        self.waitForExpectations(timeout: 5.0) { (error) in
+            XCTAssertNil(error, error!.localizedDescription)
+        }
+    }
+    func testResetPageLoading() {
+        
+        let expect = expectation(description: "testNextFetchObserver")
+        var firstRepositoryInfo:RepositoryInfo!
+        
+        RepositoryListFetcher.shared.nextPageObserver(reset:true)
+            .subscribe(onNext: { (results) in
+                firstRepositoryInfo = results[0]
+                
+                RepositoryListFetcher.shared.nextPageObserver(reset:true)
+                    .subscribe(onNext: { (results) in
+                        
+                        XCTAssertEqual(firstRepositoryInfo.owner, results[0].owner)
+                        
+                        expect.fulfill()
+                    }, onError: nil, onCompleted:nil, onDisposed: nil).disposed(by: self.disposeBag)
+                
+            }, onError: nil, onCompleted:nil, onDisposed: nil).disposed(by: self.disposeBag)
+        
         self.waitForExpectations(timeout: 5.0) { (error) in
             XCTAssertNil(error, error!.localizedDescription)
         }
         
     }
     func testNextPageLoading() {
-        let expect = expectation(description: "testNextFetchObserver")
         
-        // fetch next page after first fetch
+        let expect = expectation(description: "testNextFetchObserver")
+        var firstRepositoryInfo:RepositoryInfo!
+        
         RepositoryListFetcher.shared.nextPageObserver(reset:true)
             .subscribe(onNext: { (results) in
+                firstRepositoryInfo = results[0]
                 
                 RepositoryListFetcher.shared.nextPageObserver(reset:false)
                     .subscribe(onNext: { (results) in
-                        XCTAssertGreaterThan(results.count, 0)
-                        for repositoryInfo in results {
-                            XCTAssertNotNil(repositoryInfo.owner)
-                        }
+                        
+                        // first object of next page must be differ from first object of initial page
+                        XCTAssertNotEqual(firstRepositoryInfo.owner, results[0].owner)
+                        
                         expect.fulfill()
-                    }, onError: { (error) in
-                        XCTFail(error.localizedDescription)
-                    }, onCompleted:nil, onDisposed: nil).disposed(by: self.disposeBag)
-                
+                    }, onError: nil, onCompleted:nil, onDisposed: nil).disposed(by: self.disposeBag)
                 
             }, onError: nil, onCompleted:nil, onDisposed: nil).disposed(by: self.disposeBag)
+        
         self.waitForExpectations(timeout: 5.0) { (error) in
             XCTAssertNil(error, error!.localizedDescription)
         }
