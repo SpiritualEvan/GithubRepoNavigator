@@ -12,8 +12,6 @@ import AlamofireImage
 
 class MainViewController: UIViewController {
 
-    static let RepositoryInfoCellIdentifier = "RepositoryInfoCellIdentifier"
-    
     var tableView:UITableView!
     let disposeBag = DisposeBag()
     var searchController:UISearchController!
@@ -31,11 +29,13 @@ class MainViewController: UIViewController {
         searchController.searchBar.autocapitalizationType = .none
         
         tableView = UITableView(frame: .zero, style: .plain)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: MainViewController.RepositoryInfoCellIdentifier)
+        tableView.register(RepositoryInfoCell.self, forCellReuseIdentifier: RepositoryInfoCell.reuseIdentifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableHeaderView = searchController.searchBar
+        tableView.estimatedRowHeight = 80
+        tableView.rowHeight = UITableViewAutomaticDimension
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
@@ -91,7 +91,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // reset cell
-        let cell = tableView.dequeueReusableCell(withIdentifier: MainViewController.RepositoryInfoCellIdentifier, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryInfoCell.reuseIdentifier, for: indexPath) as! RepositoryInfoCell
         cell.imageView!.contentMode = .scaleAspectFill
         cell.imageView!.image = #imageLiteral(resourceName: "empty_avatar")
         cell.textLabel!.text = nil
