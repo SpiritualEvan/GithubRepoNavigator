@@ -8,8 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		683957AF1FDCCB0D00075EEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683957AE1FDCCB0D00075EEF /* AppDelegate.swift */; };
-		683957B11FDCCB0D00075EEF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683957B01FDCCB0D00075EEF /* ViewController.swift */; };
-		683957B41FDCCB0D00075EEF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 683957B21FDCCB0D00075EEF /* Main.storyboard */; };
+		683957B11FDCCB0D00075EEF /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683957B01FDCCB0D00075EEF /* MainViewController.swift */; };
 		683957B61FDCCB0D00075EEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 683957B51FDCCB0D00075EEF /* Assets.xcassets */; };
 		683957B91FDCCB0D00075EEF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 683957B71FDCCB0D00075EEF /* LaunchScreen.storyboard */; };
 		683957C41FDCCB0D00075EEF /* GithubRepoNavigatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683957C31FDCCB0D00075EEF /* GithubRepoNavigatorTests.swift */; };
@@ -36,8 +35,7 @@
 /* Begin PBXFileReference section */
 		683957AB1FDCCB0D00075EEF /* GithubRepoNavigator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GithubRepoNavigator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		683957AE1FDCCB0D00075EEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		683957B01FDCCB0D00075EEF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		683957B31FDCCB0D00075EEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		683957B01FDCCB0D00075EEF /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		683957B51FDCCB0D00075EEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		683957B81FDCCB0D00075EEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		683957BA1FDCCB0D00075EEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -98,8 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				683957AE1FDCCB0D00075EEF /* AppDelegate.swift */,
-				683957B01FDCCB0D00075EEF /* ViewController.swift */,
-				683957B21FDCCB0D00075EEF /* Main.storyboard */,
+				683957B01FDCCB0D00075EEF /* MainViewController.swift */,
 				683957B51FDCCB0D00075EEF /* Assets.xcassets */,
 				683957B71FDCCB0D00075EEF /* LaunchScreen.storyboard */,
 				683957BA1FDCCB0D00075EEF /* Info.plist */,
@@ -234,7 +231,6 @@
 			files = (
 				683957B91FDCCB0D00075EEF /* LaunchScreen.storyboard in Resources */,
 				683957B61FDCCB0D00075EEF /* Assets.xcassets in Resources */,
-				683957B41FDCCB0D00075EEF /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,7 +255,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				683957B11FDCCB0D00075EEF /* ViewController.swift in Sources */,
+				683957B11FDCCB0D00075EEF /* MainViewController.swift in Sources */,
 				683957AF1FDCCB0D00075EEF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,14 +292,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		683957B21FDCCB0D00075EEF /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				683957B31FDCCB0D00075EEF /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		683957B71FDCCB0D00075EEF /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
