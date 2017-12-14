@@ -15,7 +15,7 @@ struct RepositoryModel {
     
     private let disposeBag = DisposeBag()
     
-    func publicRepositories() -> Observable<[RepositoryOwner]> {
+    func repositoryListObserver() -> Observable<[RepositoryOwner]> {
         
         return Observable<[RepositoryOwner]>.create{ (observer) -> Disposable in
             

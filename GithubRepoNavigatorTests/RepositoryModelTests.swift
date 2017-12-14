@@ -29,7 +29,7 @@ class RepositoryModelTests: XCTestCase {
         let expect = expectation(description: "testFetchRepositories expect")
         
         let model = RepositoryModel(provider: MoyaProvider<GithubRepoEndpoint>())
-        model.publicRepositories()
+        model.repositoryListObserver()
             .subscribe(onNext: { (repositories) in
                 XCTAssertGreaterThan(repositories.count, 0)
                 expect.fulfill()

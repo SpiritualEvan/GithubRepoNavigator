@@ -9,8 +9,13 @@
 import Foundation
 
 struct RepositoryOwner : Codable {
-    var login:String!
-    var avatar_url:URL!
+    var loginID:String
+    var avatarURL:URL
+    
+    enum CodingKeys:String, CodingKey {
+        case loginID = "login"
+        case avatarURL = "avatar_url"
+    }
 }
 
 struct Repository : Codable {
