@@ -22,6 +22,7 @@
 		68B1A21B1FDD670A00454F1C /* EmptyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68B1A21A1FDD670A00454F1C /* EmptyCell.swift */; };
 		68B1A21D1FDD67AE00454F1C /* LoadingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68B1A21C1FDD67AE00454F1C /* LoadingCell.swift */; };
 		68BB4F211FE0F91000DAE4C9 /* RepositoryModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BB4F201FE0F91000DAE4C9 /* RepositoryModelTests.swift */; };
+		68FE78DB1FE36B9700F857F3 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 68FE78DA1FE36B9700F857F3 /* README.md */; };
 		AE77A2329A5A0D6A8B611192 /* Pods_GithubRepoNavigatorUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AF357003E23907B5E63192A /* Pods_GithubRepoNavigatorUITests.framework */; };
 		CD79F27891346EBD0FF1756E /* Pods_GithubRepoNavigator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936EBBEF36D76B7E9620A91D /* Pods_GithubRepoNavigator.framework */; };
 /* End PBXBuildFile section */
@@ -69,6 +70,7 @@
 		68B1A21A1FDD670A00454F1C /* EmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCell.swift; sourceTree = "<group>"; };
 		68B1A21C1FDD67AE00454F1C /* LoadingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCell.swift; sourceTree = "<group>"; };
 		68BB4F201FE0F91000DAE4C9 /* RepositoryModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryModelTests.swift; sourceTree = "<group>"; };
+		68FE78DA1FE36B9700F857F3 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		936EBBEF36D76B7E9620A91D /* Pods_GithubRepoNavigator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GithubRepoNavigator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6AD530C49A70B06962FE718 /* Pods-GithubRepoNavigatorTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GithubRepoNavigatorTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-GithubRepoNavigatorTests/Pods-GithubRepoNavigatorTests.release.xcconfig"; sourceTree = "<group>"; };
 		CBD0A6878F9DBEB4DB8FD18B /* Pods-GithubRepoNavigator.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GithubRepoNavigator.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GithubRepoNavigator/Pods-GithubRepoNavigator.debug.xcconfig"; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 		683957A21FDCCB0D00075EEF = {
 			isa = PBXGroup;
 			children = (
+				68FE78DA1FE36B9700F857F3 /* README.md */,
 				683957AD1FDCCB0D00075EEF /* GithubRepoNavigator */,
 				683957C21FDCCB0D00075EEF /* GithubRepoNavigatorTests */,
 				683957CD1FDCCB0D00075EEF /* GithubRepoNavigatorUITests */,
@@ -334,6 +337,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				68FE78DB1FE36B9700F857F3 /* README.md in Resources */,
 				683957B91FDCCB0D00075EEF /* LaunchScreen.storyboard in Resources */,
 				683957B61FDCCB0D00075EEF /* Assets.xcassets in Resources */,
 			);

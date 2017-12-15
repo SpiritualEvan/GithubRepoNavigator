@@ -38,7 +38,7 @@ struct RepositoryModel {
                     observer.onError(error)
                 }).disposed(by: self.disposeBag)
             
-            return Disposables.create() {}
+            return Disposables.create()
             }.subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
             .observeOn(MainScheduler.instance)
         
