@@ -8,6 +8,7 @@ target 'GithubRepoNavigator' do
   pod 'RxCocoa',        '~> 4.0'
   pod 'Alamofire',      '~> 4.5'
   pod 'AlamofireImage', '~> 3.3'
+  pod 'Moya',           '~> 10.0.1'
   pod 'Moya/RxSwift',   '~> 10.0.1'
   
   # Pods for GithubRepoNavigator
