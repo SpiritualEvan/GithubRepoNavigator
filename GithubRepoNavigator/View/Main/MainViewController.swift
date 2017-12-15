@@ -67,10 +67,11 @@ extension MainViewController {
         .distinctUntilChanged()
         
         Observable.combineLatest(repositoryListObserver, searchTextObsesrver)
-            .flatMapLatest { ( repos, searchText ) in
+            .flatMapLatest { (repos, searchText) in
                 return Observable.just(searchText.count > 0 ? repos.filter{$0.loginID.contains(searchText)} : repos)
             }
             .bind(to:tableView.rx.items) { tableView, row, item in
+                
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: RepositoryInfoCell.reuseIdentifier, for: IndexPath(row: row, section: 0)) as? RepositoryInfoCell else {
                     fatalError("expected RepositoryInfoCell but actual \(tableView.dequeueReusableCell(withIdentifier: RepositoryInfoCell.reuseIdentifier, for: IndexPath(row: row, section: 0)))")
                 }
